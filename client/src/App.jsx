@@ -11,6 +11,7 @@ import {
 
 import { router } from "./routes/AllRoutes";
 import { RouterProvider } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 
 let theme = createTheme({
   typography: {

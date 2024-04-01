@@ -24,7 +24,7 @@ const MoviesListing = () => {
 
   useEffect(() => {
     fetchMovies();
-  }, []);
+  }, [open]);
 
   const fetchMovies = async () => {
     try {
@@ -64,18 +64,21 @@ const MoviesListing = () => {
         <Grid container spacing={2}>
           {allMovies.map((data) => (
             <Grid item md={4}>
-              <Paper variant="outlined">
+              <Paper variant="outlined" sx={{ minHeight: "100%" }}>
                 <Grid container>
                   <Grid item md={6} p={2}>
                     <img
                       src={data.imageName}
                       alt="moviepicture"
-                      width="150px"
-                      height="250px"
+                      style={{
+                        maxWidth: "100%",
+                        minHeight: "100%",
+                        objectFit: "cover",
+                      }}
                     />
                   </Grid>
                   <Grid item md={6} p={2}>
-                    <Typography>{data.title}</Typography>
+                    <Typography variant="h5">{data.title}</Typography>
                     <Typography variant="caption">
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Deserunt saepe recusandae rerum omnis,
@@ -96,12 +99,14 @@ const MoviesListing = () => {
                       value={data.rating}
                       readOnly
                       size="small"
+                      sx={{ marginTop: "3px" }}
                     />
                     <Box align="right">
                       <IconButton>
                         <ModeEditOutlinedIcon
                           onClick={() => {
-                            handleOpen(), fetchSingleMovie(data._id);
+                            handleOpen();
+                            fetchSingleMovie(data._id);
                           }}
                         />
                       </IconButton>
@@ -120,6 +125,7 @@ const MoviesListing = () => {
                 open={open}
                 title={"Edit Movie"}
                 singleMovieData={singleMovieData}
+                setSingleMovieData={setSingleMovieData}
               />
             </Grid>
           ))}

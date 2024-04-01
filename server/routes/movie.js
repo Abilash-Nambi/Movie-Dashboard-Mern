@@ -33,14 +33,16 @@ router.get("/singleMovie/:id", async (req, res) => {
 router.post("/addMovie", async (req, res) => {
   try {
     const movie = req.body;
-    const isExist = await Movies.findOne({ title: req.body.title });
+    const isExist = await Movies.findOne({
+      title: { $regex: new RegExp(`\\b${req.body.title}\\b`, "i") }, // Whole word match, case-insensitive
+    });
 
     if (!isExist) {
       const movieList = await Movies.create(movie);
       res.status(200).json(movieList);
     } else {
       res.status(400).json({
-        message: "Already movie name  Exists",
+        message: "Movie name already exists",
       });
     }
   } catch (error) {
@@ -51,7 +53,6 @@ router.post("/addMovie", async (req, res) => {
 });
 
 router.delete("/deleteMovie", async (req, res) => {
-  console.log("🚀 + router.delete + req:", req);
   try {
     const movieId = req.body._id;
     const isExist = await Movies.findOne({ _id: req.body._id });
@@ -62,6 +63,31 @@ router.delete("/deleteMovie", async (req, res) => {
     } else {
       res.status(400).json({
         message: "Movie not  Exists",
+      });
+    }
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
+  }
+});
+
+router.put("/updateMovie", async (req, res) => {
+  try {
+    const movieData = req.body;
+    console.log("🚀 + router.put + movieData:", movieData);
+    const isExist = await Movies.findOne({ _id: movieData._id });
+
+    if (isExist) {
+      const movieList = await Movies.findByIdAndUpdate(
+        movieData._id,
+        movieData,
+        { new: true }
+      );
+      res.status(200).json(movieList);
+    } else {
+      res.status(400).json({
+        message: "movie  not  Exists",
       });
     }
   } catch (error) {

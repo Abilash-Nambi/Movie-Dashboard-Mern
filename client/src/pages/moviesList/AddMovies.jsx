@@ -21,6 +21,8 @@ import {
   MOVIE_API_URL,
 } from "../../constants/const";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const Wrapper = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -49,7 +51,7 @@ const AddMovies = () => {
   const [allGenres, setAllGenres] = useState([]);
   const [checkedGenre, setCheckedGenre] = useState({ payCCFee: false });
   const [selectedGenre, setSelectedGenre] = useState([]);
-
+  const navigate = useNavigate();
   // console.log("🚀 + AddMovies + selectedGenre:", selectedGenre);
 
   // // // console.log("🚀 + AddMovies + movieTitle:", movieTitle);
@@ -110,11 +112,18 @@ const AddMovies = () => {
         genre: selectedGenre,
       };
       const res = await axios.post(`${MOVIE_API_URL}/addMovie`, movieData);
+      notify("Movie Added Successfully");
+      setTimeout(() => {
+        navigate(-1);
+      }, 3000);
+
       // // console.log("🚀 + handleAddMovie + res:", res);
     } catch (error) {
-      // // // console.log("🚀 + fetchGenres + error:", error);
+      console.log("🚀 + fetchGenres + error:", error.response);
+      notify(error.response.data.message);
     }
   };
+  const notify = (mes) => toast(mes);
 
   return (
     <Wrapper>
@@ -180,6 +189,7 @@ const AddMovies = () => {
             />
           </Box>
         </Stack>
+        <ToastContainer />
       </Container>
     </Wrapper>
   );

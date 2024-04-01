@@ -31,25 +31,30 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function BasicModal({
   open,
   setOpen,
   handleOpen,
   title,
+  setSingleMovieData,
   singleMovieData,
 }) {
-  const handleClose = () => setOpen(false);
-
   const CLOUD_NAME = "dzdzx6lek";
   const CLOUDINARY_UPLOAD_PRESET = "ml_default";
-  const [imageUrl, setImageUrl] = useState("");
-  const [movieTitle, setMovieTitle] = useState("");
-  const [rating, setRating] = React.useState(0);
+
+  // const [imageUrl, setImageUrl] = useState("");
+  // const [movieTitle, setMovieTitle] = useState("");
+  // const [rating, setRating] = React.useState(0);
+
   const [allGenres, setAllGenres] = useState([]);
   const [checkedGenre, setCheckedGenre] = useState({ payCCFee: false });
   const [selectedGenre, setSelectedGenre] = useState([]);
   console.log("🚀 + selectedGenre:", selectedGenre);
+
+  const handleClose = () => setOpen(false);
 
   const handleChangeImage = (e) => {
     setImageUrl(URL.createObjectURL(e.target.files[0]));
@@ -66,7 +71,10 @@ export default function BasicModal({
       .then((data) => {
         if (data.secure_url !== "") {
           const uploadedFileUrl = data.secure_url;
-          setImageUrl(uploadedFileUrl);
+          setSingleMovieData((prev) => ({
+            ...prev,
+            imageName: uploadedFileUrl,
+          }));
         }
       })
       .catch((err) => console.error(err));
@@ -104,7 +112,7 @@ export default function BasicModal({
       const newCheckedState = Array(allGenres.length).fill(false);
       setCheckedGenre(newCheckedState);
     }
-  }, [allGenres, singleMovieData.genre]);
+  }, [allGenres, singleMovieData?.genre]);
 
   const handleCheckbox = (index, _id) => {
     const newAnswers = [...checkedGenre];
@@ -117,21 +125,26 @@ export default function BasicModal({
       setSelectedGenre(newGenre);
     }
   };
-  const handleAddMovie = async () => {
+  const handleUpdateMovie = async () => {
     try {
       const movieData = {
-        title: movieTitle,
-        imageName: imageUrl,
-        rating: rating,
+        title: singleMovieData.title,
+        imageName: singleMovieData.imageName,
+        rating: singleMovieData.rating,
         genre: selectedGenre,
+        _id: singleMovieData._id,
       };
-      const res = await axios.post(`${MOVIE_API_URL}/addMovie`, movieData);
+      const res = await axios.put(`${MOVIE_API_URL}/updateMovie`, movieData);
+      notify("Movie Updated Successfully");
+      setTimeout(() => {
+        setOpen(false);
+      }, 1000);
       // // console.log("🚀 + handleAddMovie + res:", res);
     } catch (error) {
-      // // // console.log("🚀 + fetchGenres + error:", error);
+      console.log("🚀 + fetchGenres + error:", error);
     }
   };
-
+  const notify = (mes) => toast(mes);
   return (
     <div>
       <Modal
@@ -147,12 +160,13 @@ export default function BasicModal({
 
           <Stack spacing={1} className="add-movies-container">
             <Typography variant="caption">
-              <label htmlFor="movie-image">Image</label>
+              <label htmlFor="movie-image"></label>
             </Typography>
             <img
               src={singleMovieData.imageName}
               className="add-movies-image"
               alt="Movie Image"
+              style={{ width: 100, height: 100, objectFit: "cointain" }}
             />
             <Button variant="contained" component="label" color="secondary">
               Upload File
@@ -167,7 +181,12 @@ export default function BasicModal({
             <CustomInput
               label="Title"
               variant="outlined"
-              onChange={(e) => setMovieTitle(e.target.value)}
+              onChange={(e) =>
+                setSingleMovieData((prev) => ({
+                  ...prev,
+                  title: e.target.value,
+                }))
+              }
               value={singleMovieData.title}
             />
             <Typography variant="caption">Rating</Typography>
@@ -180,7 +199,12 @@ export default function BasicModal({
               valueLabelDisplay="on"
               color="secondary"
               value={singleMovieData.rating}
-              onChange={(e) => setRating(e.target.value)}
+              onChange={(e) =>
+                setSingleMovieData((prev) => ({
+                  ...prev,
+                  rating: e.target.value,
+                }))
+              }
             />
             <Typography variant="caption">Genre</Typography>
             <Box>
@@ -209,12 +233,13 @@ export default function BasicModal({
                 variant="contained"
                 fullWidth
                 color="secondary"
-                text="Submit"
+                text="Update"
                 size="medium"
-                onClick={handleAddMovie}
+                onClick={handleUpdateMovie}
               />
             </Box>
           </Stack>
+          <ToastContainer position="top-center" />
         </Box>
       </Modal>
     </div>
