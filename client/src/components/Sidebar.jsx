@@ -18,6 +18,8 @@ import { Link } from "react-router-dom";
 
 const Wrapper = styled(Box)(({ theme }) => ({
   background: theme.palette.secondary.light,
+  position: "fixed",
+  paddingTop: "4em",
   height: "100vh",
   "& .sidebar-logo": {
     paddingTop: theme.spacing(4),

@@ -61,9 +61,9 @@ const MoviesListing = () => {
   return (
     <Box paddingTop={5}>
       <Container>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} pt={7}>
           {allMovies.map((data) => (
-            <Grid item md={4}>
+            <Grid item md={4} xs={12}>
               <Paper variant="outlined" sx={{ minHeight: "100%" }}>
                 <Grid container>
                   <Grid item md={6} p={2}>

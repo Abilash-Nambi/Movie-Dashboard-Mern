@@ -8,10 +8,10 @@ const RootLayout = () => {
   return (
     <Box>
       <Grid container>
-        <Grid item md={2} xs={4}>
+        <Grid item md={2} xs={5}>
           <Sidebar />
         </Grid>
-        <Grid item md={10} xs={8}>
+        <Grid item md={10} xs={7}>
           <Header />
           <Outlet />
         </Grid>
