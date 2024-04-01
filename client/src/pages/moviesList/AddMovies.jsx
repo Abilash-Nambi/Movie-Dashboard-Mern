@@ -49,9 +49,10 @@ const AddMovies = () => {
   const [allGenres, setAllGenres] = useState([]);
   const [checkedGenre, setCheckedGenre] = useState({ payCCFee: false });
   const [selectedGenre, setSelectedGenre] = useState([]);
-  console.log("🚀 + AddMovies + selectedGenre:", selectedGenre);
 
-  // // console.log("🚀 + AddMovies + movieTitle:", movieTitle);
+  // console.log("🚀 + AddMovies + selectedGenre:", selectedGenre);
+
+  // // // console.log("🚀 + AddMovies + movieTitle:", movieTitle);
 
   const handleChangeImage = (e) => {
     setImageUrl(URL.createObjectURL(e.target.files[0]));
@@ -82,10 +83,10 @@ const AddMovies = () => {
     try {
       const res = await axios.get(GENRE_API_URL);
       setAllGenres(res.data);
-      // // //console.log("🚀 + fetchGenres + res.data:", res.data);
+      // // // //console.log("🚀 + fetchGenres + res.data:", res.data);
       setCheckedGenre(Array(res.data.length).fill(false));
     } catch (error) {
-      // // console.log("🚀 + fetchGenres + error:", error);
+      // // // console.log("🚀 + fetchGenres + error:", error);
     }
   };
 
@@ -109,9 +110,9 @@ const AddMovies = () => {
         genre: selectedGenre,
       };
       const res = await axios.post(`${MOVIE_API_URL}/addMovie`, movieData);
-      // console.log("🚀 + handleAddMovie + res:", res);
+      // // console.log("🚀 + handleAddMovie + res:", res);
     } catch (error) {
-      // // console.log("🚀 + fetchGenres + error:", error);
+      // // // console.log("🚀 + fetchGenres + error:", error);
     }
   };
 
