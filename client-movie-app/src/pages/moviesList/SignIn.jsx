@@ -11,7 +11,9 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
+import { USER_API_URL } from "../../constants/const";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -32,13 +34,38 @@ function Copyright(props) {
 }
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get("email"),
       password: data.get("password"),
     });
+
+    try {
+      const response = await axios.post(`${USER_API_URL}/signIn`, {
+        data: {
+          email: data.get("email"),
+          password: data.get("password"),
+        },
+      });
+
+      if (response.status == 200) {
+        localStorage.setItem(
+          "movieDb",
+          JSON.stringify({
+            token: response?.data?.token,
+            email: response?.data?.email,
+          })
+        );
+        navigate("/");
+      }
+
+      console.log("🚀 + handleSubmit + response:", response);
+    } catch (error) {
+      console.log("🚀 + handleSubmit + error:", error);
+    }
   };
 
   return (

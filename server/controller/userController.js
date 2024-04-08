@@ -4,9 +4,11 @@ const { generateToken } = require("../utils/jwt");
 
 const signUp = async (req, res) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName } = req.body.data;
+    console.log("🚀 + signUp + password:", password);
 
     const isExist = await usersModel.findOne({ email });
+    console.log("🚀 + signUp + isExist:", isExist);
 
     if (!isExist) {
       const hashPass = await generatePasswordHash(password);
@@ -16,7 +18,13 @@ const signUp = async (req, res) => {
         email,
         password: hashPass,
       });
-      res.status(200).json(UserList);
+
+      // Fetching the created user again with password excluded
+      const userWithoutPassword = await usersModel
+        .findById(UserList._id)
+        .select("-password");
+
+      res.status(200).json(userWithoutPassword);
       return;
     } else {
       res.status(400).json({
@@ -32,10 +40,10 @@ const signUp = async (req, res) => {
 };
 const signIn = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body.data;
 
     const isExist = await usersModel.findOne({ email });
-    console.log("🚀 + signIn + isExist:", isExist);
+    // console.log("🚀 + signIn + isExist:", isExist);
 
     if (isExist) {
       const validPassword = await comparePassword(password, isExist.password);
@@ -45,9 +53,10 @@ const signIn = async (req, res) => {
 
       //generate acess token..
       const token = generateToken(isExist._id);
+      console.log("🚀 + signIn + token:", token);
       return res.status(200).json({
         message: "Login Success",
-        token,
+        token: token,
         email: isExist.email,
       });
     } else {

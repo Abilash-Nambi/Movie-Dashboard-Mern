@@ -12,7 +12,8 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
 import styled from "@emotion/styled";
-
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
 const Wrapper = styled(Box)(({ theme }) => ({
   "& .MuiToolbar-root": {
     background: theme.palette.secondary.light,
@@ -25,8 +26,24 @@ const Wrapper = styled(Box)(({ theme }) => ({
       color: theme.palette.secondary.main,
     },
   },
+  "& .MuiPopover-paper": {
+    top: "67px",
+    left: "634px",
+  },
 }));
 const Header = () => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleSignOut = () => {
+    setAnchorEl(null);
+  };
   return (
     <Wrapper>
       <AppBar position="fixed">
@@ -51,15 +68,36 @@ const Header = () => {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+
             <IconButton
               size="large"
-              edge="end"
               aria-label="account of current user"
+              aria-controls="menu-appbar"
               aria-haspopup="true"
+              onClick={handleMenu}
               color="inherit"
             >
               <AccountCircleIcon />
             </IconButton>
+            <Menu
+              sx={{ top: "50px" }}
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+            </Menu>
           </Box>
         </Toolbar>
       </AppBar>
