@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const Genres = require("../models/genreModel");
+const genreModal = require("../models/genreModel");
 
 router.get("/", async (req, res) => {
   try {
-    const genresList = await Genres.find({});
+    const genresList = await genreModal.find({});
     res.status(200).json(genresList);
   } catch (error) {
     res.status(400).json({
@@ -18,12 +18,12 @@ router.post("/addGenres", async (req, res) => {
     const { data } = req.body;
 
     //const isExist = await Genres.findOne({ title: req.body.title });
-    const isExist = await Genres.findOne({
+    const isExist = await genreModal.findOne({
       title: { $regex: new RegExp(data, "i") },
     }); //this command will find the case sensitive same word also///
 
     if (!isExist) {
-      const movieList = await Genres.create({ title: data });
+      const movieList = await genreModal.create({ title: data });
       res.status(200).json(movieList);
     } else {
       res.status(400).json({
@@ -40,12 +40,12 @@ router.delete("/deleteGenre/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const isExist = await Genres.find({
+    const isExist = await genreModal.find({
       _id: id,
     });
 
     if (isExist) {
-      const movieList = await Genres.findByIdAndDelete({ _id: id });
+      const movieList = await genreModal.findByIdAndDelete({ _id: id });
       res.status(200).json(movieList);
     } else {
       res.status(400).json({

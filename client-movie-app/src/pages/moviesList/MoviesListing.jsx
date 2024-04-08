@@ -16,6 +16,7 @@ import { MOVIE_API_URL } from "../../constants/const";
 import axios from "axios";
 import Chip from "@mui/material/Chip";
 import AddHomeIcon from "@mui/icons-material/AddHome";
+import { Link } from "react-router-dom";
 const MoviesListing = () => {
   const [allMovies, setAllMovies] = useState([]);
   const [singleMovieData, setSingleMovieData] = useState([]);
@@ -118,13 +119,16 @@ const MoviesListing = () => {
                       </IconButton> */}
                       </Box>
                     </Box>
-                    <Button
-                      variant="outlined"
-                      color="success"
-                      startIcon={<AddHomeIcon />}
-                    >
-                      Watch Later
-                    </Button>
+
+                    <Link to="/movies-watchlater">
+                      <Button
+                        variant="outlined"
+                        color="success"
+                        startIcon={<AddHomeIcon />}
+                      >
+                        Watch Later
+                      </Button>
+                    </Link>
                   </Grid>
                 </Grid>
               </Paper>
