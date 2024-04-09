@@ -5,7 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
+
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -14,6 +14,7 @@ import Container from "@mui/material/Container";
 import axios from "axios";
 import { USER_API_URL } from "../../constants/const";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -57,6 +58,7 @@ export default function SignIn() {
           JSON.stringify({
             token: response?.data?.token,
             email: response?.data?.email,
+            userId: response?.data?.id,
           })
         );
         navigate("/");
@@ -131,7 +133,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link to="/sign-up" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

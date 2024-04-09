@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    movie: [
+    movies: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Movies",

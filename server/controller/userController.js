@@ -38,6 +38,49 @@ const signUp = async (req, res) => {
     });
   }
 };
+const watchLaterList = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+
+    if (userId) {
+      const moviesList = await usersModel
+        .find({ _id: userId })
+        .select("movies")
+        .populate({ path: "movies", populate: { path: "genre" } });
+      //console.log("🚀 + watchLaterList + moviesList:", moviesList);
+      return res.status(200).json(moviesList);
+    } else {
+      return res.status(400).json({ message: "userId is required" });
+    }
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+const addToWatchLater = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    const { movieId } = req.body.data;
+    if (userId && movieId) {
+      const newList = await usersModel.findByIdAndUpdate(
+        userId,
+        {
+          $push: { movies: movieId },
+        },
+        { new: true }
+      );
+
+      return res.status(200).json(newList);
+    } else {
+      return res.status(400).json({ message: "userId/movieId is required" });
+    }
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
+  }
+};
 const signIn = async (req, res) => {
   try {
     const { email, password } = req.body.data;
@@ -58,6 +101,7 @@ const signIn = async (req, res) => {
         message: "Login Success",
         token: token,
         email: isExist.email,
+        id: isExist._id,
       });
     } else {
       res.status(400).json({
@@ -72,4 +116,4 @@ const signIn = async (req, res) => {
   }
 };
 
-module.exports = { signUp, signIn };
+module.exports = { signUp, signIn, addToWatchLater, watchLaterList };

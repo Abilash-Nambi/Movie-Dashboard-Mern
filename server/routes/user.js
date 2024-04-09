@@ -1,5 +1,10 @@
 const express = require("express");
-const { signUp, signIn } = require("../controller/userController");
+const {
+  signUp,
+  signIn,
+  addToWatchLater,
+  watchLaterList,
+} = require("../controller/userController");
 
 const router = express.Router();
 
@@ -16,5 +21,8 @@ router.get("/", async (req, res) => {
 
 router.post("/addUser", signUp);
 router.post("/signIn", signIn);
+
+router.put("/addToWatchLater", addToWatchLater);
+router.get("/watchList", watchLaterList);
 
 module.exports = router;

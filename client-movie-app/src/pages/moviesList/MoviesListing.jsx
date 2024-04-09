@@ -12,16 +12,20 @@ import React, { useEffect, useState } from "react";
 import image from "../../assets/avengersendgame_lob_crd_05_2.jpg";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
-import { MOVIE_API_URL } from "../../constants/const";
+import { MOVIE_API_URL, USER_API_URL } from "../../constants/const";
 import axios from "axios";
 import Chip from "@mui/material/Chip";
 import AddHomeIcon from "@mui/icons-material/AddHome";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 const MoviesListing = () => {
   const [allMovies, setAllMovies] = useState([]);
   const [singleMovieData, setSingleMovieData] = useState([]);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMovies();
@@ -31,34 +35,56 @@ const MoviesListing = () => {
     try {
       const res = await axios.get(MOVIE_API_URL);
       setAllMovies(res.data);
-      console.log("🚀 + fetchGenres + res.data:", res.data);
+      //console.log("🚀 + fetchGenres + res.data:", res.data);
     } catch (error) {
       console.log("🚀 + fetchGenres + error:", error);
     }
   };
 
-  const deleteMovies = async (id) => {
-    try {
-      const res = await axios.delete(`${MOVIE_API_URL}/deleteMovie`, {
-        data: { _id: id },
-      });
-      fetchMovies();
-    } catch (error) {
-      console.log("🚀 + fetchGenres + error:", error);
+  // const deleteMovies = async (id) => {
+
+  //   try {
+  //     const res = await axios.delete(`${MOVIE_API_URL}/deleteMovie`, {
+  //       data: { _id: id },
+  //     });
+  //     fetchMovies();
+  //   } catch (error) {
+  //     console.log("🚀 + fetchGenres + error:", error);
+  //   }
+  // };
+
+  // const fetchSingleMovie = async (id) => {
+  //   try {
+  //     const res = await axios.get(`${MOVIE_API_URL}/singleMovie/${id}`);
+  //     setSingleMovieData(res.data);
+  //     // // // //console.log("🚀 + fetchGenres + res.data:", res.data);
+  //     //setCheckedGenre(Array(res.data.length).fill(false));
+  //   } catch (error) {
+  //     console.log("🚀 + fetchGenres + error:", error);
+  //   }
+  // };
+
+  const addToWatchLater = async (id) => {
+    console.log(id);
+    let isLoggedIn = JSON.parse(localStorage.getItem("movieDb"));
+    if (!isLoggedIn || !isLoggedIn.token) {
+      navigate("/sign-in");
+    } else {
+      //navigate("/movies-watchlater");
+      try {
+        const userId = isLoggedIn.userId;
+        const response = axios.put(
+          `${USER_API_URL}/addToWatchLater?userId=${userId}`,
+          {
+            data: { movieId: id },
+          }
+        );
+        console.log("🚀 + watchLater + response:", response);
+      } catch (error) {
+        console.log("🚀 + watchLater + error:", error);
+      }
     }
   };
-
-  const fetchSingleMovie = async (id) => {
-    try {
-      const res = await axios.get(`${MOVIE_API_URL}/singleMovie/${id}`);
-      setSingleMovieData(res.data);
-      // // // //console.log("🚀 + fetchGenres + res.data:", res.data);
-      //setCheckedGenre(Array(res.data.length).fill(false));
-    } catch (error) {
-      console.log("🚀 + fetchGenres + error:", error);
-    }
-  };
-
   return (
     <Box paddingTop={5}>
       <Container>
@@ -120,15 +146,16 @@ const MoviesListing = () => {
                       </Box>
                     </Box>
 
-                    <Link to="/movies-watchlater">
-                      <Button
-                        variant="outlined"
-                        color="success"
-                        startIcon={<AddHomeIcon />}
-                      >
-                        Watch Later
-                      </Button>
-                    </Link>
+                    {/*  <Link to="/movies-watchlater"> */}
+                    <Button
+                      variant="outlined"
+                      color="success"
+                      startIcon={<AddHomeIcon />}
+                      onClick={() => addToWatchLater(data._id)}
+                    >
+                      Watch Later
+                    </Button>
+                    {/* </Link> */}
                   </Grid>
                 </Grid>
               </Paper>
