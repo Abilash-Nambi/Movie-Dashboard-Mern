@@ -4,6 +4,7 @@ const {
   signIn,
   addToWatchLater,
   watchLaterList,
+  removeWatchLaterList,
 } = require("../controller/userController");
 
 const router = express.Router();
@@ -24,5 +25,6 @@ router.post("/signIn", signIn);
 
 router.put("/addToWatchLater", addToWatchLater);
 router.get("/watchList", watchLaterList);
+router.put("/removeMovie", removeWatchLaterList);
 
 module.exports = router;

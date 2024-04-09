@@ -38,6 +38,46 @@ const signUp = async (req, res) => {
     });
   }
 };
+const removeWatchLaterList = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    // console.log("🚀 + removeWatchLaterList + userId:", userId);
+    const { movieId } = req.body.data;
+    // console.log("🚀 + removeWatchLaterList + movieId:", movieId);
+
+    if (!userId || !movieId) {
+      return res
+        .status(400)
+        .json({ message: "userId and movieId are required" });
+    }
+
+    const result = await usersModel.updateOne(
+      { _id: userId },
+      { $pull: { movies: movieId } }
+    );
+    if (result.acknowledged) {
+      if (result.modifiedCount === 1 && result.matchedCount === 1) {
+        console.log(
+          "Movie successfully removed from the user's watch later list"
+        );
+        return res
+          .status(200)
+          .json({ message: "Movie removed from watch later list" });
+      } else {
+        console.log("Movie was not found in the user's watch later list");
+        return res.status(400).json({
+          message: "Movie was not found in the user's watch later list",
+        });
+      }
+    } else {
+      console.log("Operation was not acknowledged by the server");
+    }
+  } catch (error) {
+    console.error("Error in removeWatchLaterList:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const watchLaterList = async (req, res) => {
   try {
     const userId = req.query.userId;
@@ -116,4 +156,10 @@ const signIn = async (req, res) => {
   }
 };
 
-module.exports = { signUp, signIn, addToWatchLater, watchLaterList };
+module.exports = {
+  signUp,
+  signIn,
+  addToWatchLater,
+  watchLaterList,
+  removeWatchLaterList,
+};
