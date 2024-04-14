@@ -19,46 +19,33 @@ import AddHomeIcon from "@mui/icons-material/AddHome";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
+import MultipleSelectChip from "../../components/FilterMovies";
 const MoviesListing = () => {
   const [allMovies, setAllMovies] = useState([]);
-  const [singleMovieData, setSingleMovieData] = useState([]);
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const [filterMovies, setFilteredMovies] = useState([]);
+
+  // const [singleMovieData, setSingleMovieData] = useState([]);
+  const [selectedGenre, setSelectedGenre] = React.useState([]);
+  console.log("🚀 + MoviesListing + selectedGenre:", selectedGenre);
+
+  // const [open, setOpen] = useState(false);
+  // const handleOpen = () => setOpen(true);
 
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   fetchMovies();
+  // }, []);
+
   useEffect(() => {
-    fetchMovies();
-  }, [open]);
+    fetchFilteredMovies();
+  }, [selectedGenre]);
 
-  const fetchMovies = async () => {
-    try {
-      const res = await axios.get(MOVIE_API_URL);
-      setAllMovies(res.data);
-      //console.log("🚀 + fetchGenres + res.data:", res.data);
-    } catch (error) {
-      console.log("🚀 + fetchGenres + error:", error);
-    }
-  };
-
-  // const deleteMovies = async (id) => {
-
+  // const fetchMovies = async () => {
   //   try {
-  //     const res = await axios.delete(`${MOVIE_API_URL}/deleteMovie`, {
-  //       data: { _id: id },
-  //     });
-  //     fetchMovies();
-  //   } catch (error) {
-  //     console.log("🚀 + fetchGenres + error:", error);
-  //   }
-  // };
-
-  // const fetchSingleMovie = async (id) => {
-  //   try {
-  //     const res = await axios.get(`${MOVIE_API_URL}/singleMovie/${id}`);
-  //     setSingleMovieData(res.data);
-  //     // // // //console.log("🚀 + fetchGenres + res.data:", res.data);
-  //     //setCheckedGenre(Array(res.data.length).fill(false));
+  //     const res = await axios.get(MOVIE_API_URL);
+  //     setAllMovies(res.data);
+  //     //console.log("🚀 + fetchGenres + res.data:", res.data);
   //   } catch (error) {
   //     console.log("🚀 + fetchGenres + error:", error);
   //   }
@@ -85,11 +72,30 @@ const MoviesListing = () => {
       }
     }
   };
+
+  const fetchFilteredMovies = async () => {
+    try {
+      const res = await axios.post(`${MOVIE_API_URL}/filter`, {
+        data: selectedGenre,
+      });
+      setFilteredMovies(res.data);
+    } catch (error) {
+      console.log("🚀 + fetchGenres + error:", error);
+    }
+  };
+
   return (
     <Box paddingTop={5}>
       <Container>
+        <Box pt={7} textAlign="right">
+          <MultipleSelectChip
+            fetchFilteredMovies={fetchFilteredMovies}
+            selectedGenre={selectedGenre}
+            setSelectedGenre={setSelectedGenre}
+          />
+        </Box>
         <Grid container spacing={2} pt={7}>
-          {allMovies.map((data) => (
+          {filterMovies.map((data) => (
             <Grid item md={4} xs={12}>
               <Paper variant="outlined" sx={{ minHeight: "100%" }}>
                 <Grid container>

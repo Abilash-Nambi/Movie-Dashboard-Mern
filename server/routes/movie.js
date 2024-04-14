@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Movies = require("../models/movieModel");
+const movieModel = require("../models/movieModel");
+const genreModel = require("../models/genreModel");
 
 router.get("/", async (req, res) => {
   try {
@@ -17,7 +19,6 @@ router.get("/", async (req, res) => {
 
 router.get("/singleMovie/:id", async (req, res) => {
   const { id } = req.params;
-  console.log("🚀 + router.get + id:", id);
   try {
     const moviesList = await Movies.findById(id)
       .select(" title rating id genre imageName")
@@ -75,7 +76,6 @@ router.delete("/deleteMovie", async (req, res) => {
 router.put("/updateMovie", async (req, res) => {
   try {
     const movieData = req.body;
-    console.log("🚀 + router.put + movieData:", movieData);
     const isExist = await Movies.findOne({ _id: movieData._id });
 
     if (isExist) {
@@ -89,6 +89,37 @@ router.put("/updateMovie", async (req, res) => {
       res.status(400).json({
         message: "movie  not  Exists",
       });
+    }
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
+  }
+});
+
+router.post("/filter", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 5;
+    let genre = req.body.data;
+    console.log("🚀 + router.post + genre:", genre);
+    const skipCount = page * 10;
+    let filter = {};
+    if (genre.length > 0) {
+      const genreData = await genreModel.find({ title: { $in: genre } });
+      const genreObjId = genreData.map((data) => data._id);
+      filter.genre = { $all: genreObjId };
+      const filteredMovies = await movieModel
+        .find(filter)
+        .populate("genre")
+        .skip(skipCount)
+        .limit(limit);
+      res.status(200).json(filteredMovies);
+    } else {
+      const moviesList = await Movies.find({})
+        .select("title rating id genre imageName")
+        .populate("genre");
+      res.status(200).json(moviesList);
     }
   } catch (error) {
     res.status(400).json({

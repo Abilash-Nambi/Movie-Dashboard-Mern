@@ -52,7 +52,7 @@ export default function BasicModal({
   const [allGenres, setAllGenres] = useState([]);
   const [checkedGenre, setCheckedGenre] = useState({ payCCFee: false });
   const [selectedGenre, setSelectedGenre] = useState([]);
-  console.log("🚀 + selectedGenre:", selectedGenre);
+  // console.log("🚀 + selectedGenre:", selectedGenre);
 
   const handleClose = () => setOpen(false);
 
@@ -88,10 +88,10 @@ export default function BasicModal({
     try {
       const res = await axios.get(GENRE_API_URL);
       setAllGenres(res.data);
-      //console.log("🚀 + fetchGenres + res.data:", res.data);
+      // //console.log("🚀 + fetchGenres + res.data:", res.data);
       setCheckedGenre(Array(res.data.length).fill(false));
     } catch (error) {
-      console.log("🚀 + fetchGenres + error:", error);
+      // console.log("🚀 + fetchGenres + error:", error);
     }
   };
 
@@ -139,9 +139,9 @@ export default function BasicModal({
       setTimeout(() => {
         setOpen(false);
       }, 1000);
-      // // console.log("🚀 + handleAddMovie + res:", res);
+      // // // console.log("🚀 + handleAddMovie + res:", res);
     } catch (error) {
-      console.log("🚀 + fetchGenres + error:", error);
+      // console.log("🚀 + fetchGenres + error:", error);
     }
   };
   const notify = (mes) => toast(mes);
