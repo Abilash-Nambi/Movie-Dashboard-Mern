@@ -45,12 +45,25 @@ const MoviesWatchLater = () => {
       );
       setAllMovies(res.data);
     } catch (error) {
-      // console.log("🚀 + fetchGenres + error:", error);
+      console.log("🚀 + fetchGenres + error:", error);
     }
   };
 
-  const removeMovie = (id) => {
-    console.log("🚀 + removeMovie + id:", id);
+  const removeMovie = async (id) => {
+    let userData = JSON.parse(localStorage.getItem("movieDb"));
+    try {
+      const res = await axios.put(
+        `${USER_API_URL}/removeMovie?userId=${userData.userId}`,
+        {
+          data: id,
+        }
+      );
+      fetchMovies();
+
+      console.log("🚀 + removeMovie + res:", res);
+    } catch (error) {
+      console.log("🚀 + fetchGenres + error:", error);
+    }
   };
 
   return (

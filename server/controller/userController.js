@@ -41,9 +41,9 @@ const signUp = async (req, res) => {
 const removeWatchLaterList = async (req, res) => {
   try {
     const userId = req.query.userId;
-    // console.log("🚀 + removeWatchLaterList + userId:", userId);
-    const { movieId } = req.body.data;
-    // console.log("🚀 + removeWatchLaterList + movieId:", movieId);
+    console.log("🚀 + removeWatchLaterList + userId:", userId);
+    const movieId = req.body.data;
+    console.log("🚀 + removeWatchLaterList + movieId:", movieId);
 
     if (!userId || !movieId) {
       return res
@@ -121,6 +121,7 @@ const addToWatchLater = async (req, res) => {
     });
   }
 };
+
 const signIn = async (req, res) => {
   try {
     const { email, password } = req.body.data;

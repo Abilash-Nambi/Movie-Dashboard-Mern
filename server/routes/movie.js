@@ -102,7 +102,6 @@ router.put("/updateMovie", async (req, res) => {
 router.post("/filter", async (req, res) => {
   try {
     const page = parseInt(req.query.page) - 1 || 0;
-    console.log("🚀 + router.post + page:", page);
     const limit = parseInt(req.query.limit) || 3;
     let genre = req.body.data;
     const skipCount = page * limit;
