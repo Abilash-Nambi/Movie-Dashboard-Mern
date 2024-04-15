@@ -10,7 +10,7 @@ export default function PaginationControlled({
   totalPage,
 }) {
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} alignItems={"center"} textAlign={"center"}>
       <Box>
         <Typography>Page: {page}</Typography>
         <Pagination count={totalPage} page={page} onChange={handleChange} />
