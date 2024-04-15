@@ -26,6 +26,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 const Wrapper = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
+  paddingTop: "6em",
   "& .add-movies-container": {
     background: theme.palette.secondary.light,
     padding: theme.spacing(5),

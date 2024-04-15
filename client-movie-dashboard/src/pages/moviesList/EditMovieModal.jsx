@@ -208,7 +208,10 @@ export default function BasicModal({
             />
             <Typography variant="caption">Genre</Typography>
             <Box>
-              <FormGroup className="add-movies-genre">
+              <FormGroup
+                className="add-movies-genre"
+                sx={{ display: "flex", flexDirection: "row" }}
+              >
                 {allGenres.map((data, i) => {
                   return (
                     <FormControlLabel

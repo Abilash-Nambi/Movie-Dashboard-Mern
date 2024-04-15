@@ -20,13 +20,17 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import MultipleSelectChip from "../../components/FilterMovies";
+import PaginationControlled from "../../components/Pagination";
 const MoviesListing = () => {
   const [allMovies, setAllMovies] = useState([]);
   const [filterMovies, setFilteredMovies] = useState([]);
-
-  // const [singleMovieData, setSingleMovieData] = useState([]);
   const [selectedGenre, setSelectedGenre] = React.useState([]);
-  console.log("🚀 + MoviesListing + selectedGenre:", selectedGenre);
+  const [page, setPage] = React.useState(1);
+  const [totalPage, setTotalPage] = React.useState(0);
+
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
 
   // const [open, setOpen] = useState(false);
   // const handleOpen = () => setOpen(true);
@@ -39,7 +43,7 @@ const MoviesListing = () => {
 
   useEffect(() => {
     fetchFilteredMovies();
-  }, [selectedGenre]);
+  }, [selectedGenre, page]);
 
   // const fetchMovies = async () => {
   //   try {
@@ -75,10 +79,13 @@ const MoviesListing = () => {
 
   const fetchFilteredMovies = async () => {
     try {
-      const res = await axios.post(`${MOVIE_API_URL}/filter`, {
+      const res = await axios.post(`${MOVIE_API_URL}/filter?page=${page}`, {
         data: selectedGenre,
       });
-      setFilteredMovies(res.data);
+      setFilteredMovies(res.data.movieList);
+      setTotalPage(res.data.totalPage);
+      console.log("🚀 + fetchFilteredMovies + res:", res.data.totalPage);
+      // setFilteredMovies(res.data.MovieList);
     } catch (error) {
       console.log("🚀 + fetchGenres + error:", error);
     }
@@ -95,7 +102,7 @@ const MoviesListing = () => {
           />
         </Box>
         <Grid container spacing={2} pt={7}>
-          {filterMovies.map((data) => (
+          {filterMovies?.map((data) => (
             <Grid item md={4} xs={12}>
               <Paper variant="outlined" sx={{ minHeight: "100%" }}>
                 <Grid container>
@@ -168,6 +175,13 @@ const MoviesListing = () => {
             </Grid>
           ))}
         </Grid>
+        <Box pt={7}>
+          <PaginationControlled
+            page={page}
+            handleChange={handleChange}
+            totalPage={totalPage}
+          />
+        </Box>
       </Container>
     </Box>
   );
