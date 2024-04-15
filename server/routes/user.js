@@ -6,6 +6,7 @@ const {
   watchLaterList,
   removeWatchLaterList,
 } = require("../controller/userController");
+const { checkAuth } = require("../middleware/checkAuth");
 
 const router = express.Router();
 
@@ -23,8 +24,8 @@ router.get("/", async (req, res) => {
 router.post("/addUser", signUp);
 router.post("/signIn", signIn);
 
-router.put("/addToWatchLater", addToWatchLater);
-router.get("/watchList", watchLaterList);
+router.put("/addToWatchLater", checkAuth, addToWatchLater);
+router.get("/watchList", checkAuth, watchLaterList);
 router.put("/removeMovie", removeWatchLaterList);
 
 module.exports = router;

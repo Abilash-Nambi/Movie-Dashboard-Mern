@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import MultipleSelectChip from "../../components/FilterMovies";
 import PaginationControlled from "../../components/Pagination";
+import { ToastContainer, toast } from "react-toastify";
 const MoviesListing = () => {
   const [allMovies, setAllMovies] = useState([]);
   const [filterMovies, setFilteredMovies] = useState([]);
@@ -68,14 +69,19 @@ const MoviesListing = () => {
           `${USER_API_URL}/addToWatchLater?userId=${userId}`,
           {
             data: { movieId: id },
-          }
+          },
+          { headers: { Authorization: isLoggedIn.token } }
         );
+        notifySuccess("Movie Added To Watchlater");
         console.log("🚀 + watchLater + response:", response);
       } catch (error) {
         console.log("🚀 + watchLater + error:", error);
+        notifyErr(error.response.data.message);
       }
     }
   };
+  const notifyErr = (mes) => toast.error(mes);
+  const notifySuccess = (mes) => toast.success(mes, { autoClose: 5000 });
 
   const fetchFilteredMovies = async () => {
     try {
@@ -183,6 +189,7 @@ const MoviesListing = () => {
           />
         </Box>
       </Container>
+      <ToastContainer />
     </Box>
   );
 };

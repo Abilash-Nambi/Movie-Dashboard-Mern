@@ -18,6 +18,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import Snackbar from "@mui/material/Snackbar";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const MoviesWatchLater = () => {
   const [allMovies, setAllMovies] = useState([]);
@@ -27,6 +28,7 @@ const MoviesWatchLater = () => {
     horizontal: "center",
   });
   const { vertical, horizontal, open } = state;
+  const navigate = useNavigate();
 
   const handleClose = () => {
     setState((prev) => ({ ...prev, open: false }));
@@ -41,11 +43,12 @@ const MoviesWatchLater = () => {
     let userData = JSON.parse(localStorage.getItem("movieDb"));
     try {
       const res = await axios.get(
-        `${USER_API_URL}/watchList?userId=${userData.userId}`
+        `${USER_API_URL}/watchList?userId=${userData.userId}`,
+        { headers: { Authorization: userData.token } }
       );
       setAllMovies(res.data);
     } catch (error) {
-      console.log("🚀 + fetchGenres + error:", error);
+      console.log("🚀 + fetchGenres + error:", error.message);
     }
   };
 
@@ -58,14 +61,17 @@ const MoviesWatchLater = () => {
           data: id,
         }
       );
+      notifySuccess("Movie removed Successfully");
       fetchMovies();
 
       console.log("🚀 + removeMovie + res:", res);
     } catch (error) {
       console.log("🚀 + fetchGenres + error:", error);
+      notifyErr(error.response.data.message);
     }
   };
-
+  const notifyErr = (mes) => toast.error(mes);
+  const notifySuccess = (mes) => toast.success(mes, { autoClose: 5000 });
   return (
     <Box paddingTop={5}>
       <Container>
@@ -156,6 +162,7 @@ const MoviesWatchLater = () => {
           )}
         </Grid>
       </Container>
+      <ToastContainer />
     </Box>
   );
 };
