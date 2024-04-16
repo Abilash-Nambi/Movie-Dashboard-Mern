@@ -69,10 +69,12 @@ const Header = () => {
       <AppBar position="fixed">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box>
-            <Typography variant="h4" className="sidebar-logo" align="center">
-              <span className="logo-letter-color">P</span>lay
-              <span className="logo-letter-color">M</span>ovies App
-            </Typography>
+            <Link to="/">
+              <Typography variant="h4" className="sidebar-logo" align="center">
+                <span className="logo-letter-color">P</span>lay
+                <span className="logo-letter-color">M</span>ovies App
+              </Typography>
+            </Link>
           </Box>
           {show && (
             <Box>
