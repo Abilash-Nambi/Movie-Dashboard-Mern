@@ -1,6 +1,11 @@
-const usersModel = require("../models/userModel");
+const userModel = require("../models/userModel");
+
 const { generatePasswordHash, comparePassword } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/jwt");
+const { resetPasswordNodeMailer } = require("../utils/nodemailer");
+const { generateVerificationCode } = require("../utils/verificationCode");
+
+let PasscodeVerificationData = {};
 
 const signUp = async (req, res) => {
   try {
@@ -126,7 +131,7 @@ const signIn = async (req, res) => {
   try {
     const { email, password } = req.body.data;
 
-    const isExist = await usersModel.findOne({ email });
+    const isExist = await userModel.findOne({ email });
     // console.log("🚀 + signIn + isExist:", isExist);
 
     if (isExist) {
@@ -156,6 +161,53 @@ const signIn = async (req, res) => {
     });
   }
 };
+const forgetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    console.log("🚀 + forgetPassword + email:", email);
+    const exist = await userModel.findOne({ email: email });
+
+    if (!exist) {
+      res
+        .status(400)
+        .json({ message: `No user found with email: ${email} 👎🏻` });
+      return;
+    }
+    const code = generateVerificationCode();
+    PasscodeVerificationData.userId = exist._id;
+    PasscodeVerificationData.code = code;
+    console.log("🚀 + PasscodeVerificationData:", PasscodeVerificationData);
+    const result = await resetPasswordNodeMailer(email, code);
+    //console.log("🚀 + forgetPassword + result:", result);
+    res.json({ message: result });
+  } catch (error) {
+    res.json({ message: error.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { passwordReset } = req.body;
+    // console.log("🚀 + resetPassword + passwordReset:", passwordReset);
+    //console.log(PasscodeVerificationData, "465");
+    if (passwordReset.resetCode === PasscodeVerificationData.code) {
+      const hashPass = await generatePasswordHash(passwordReset.newPassword);
+      const update = await userModel.findByIdAndUpdate(
+        PasscodeVerificationData.userId,
+        {
+          password: hashPass,
+        },
+        { new: true }
+      );
+      PasscodeVerificationData = {};
+      res.json(update);
+    } else {
+      res.status(401).json({ message: "You entered the wrong reset code!.😣" });
+    }
+  } catch (error) {
+    console.log("🚀 + resetPassword + error:", error);
+  }
+};
 
 module.exports = {
   signUp,
@@ -163,4 +215,6 @@ module.exports = {
   addToWatchLater,
   watchLaterList,
   removeWatchLaterList,
+  forgetPassword,
+  resetPassword,
 };

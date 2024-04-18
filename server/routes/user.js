@@ -5,6 +5,8 @@ const {
   addToWatchLater,
   watchLaterList,
   removeWatchLaterList,
+  forgetPassword,
+  resetPassword,
 } = require("../controller/userController");
 const { checkAuth } = require("../middleware/checkAuth");
 
@@ -23,9 +25,10 @@ router.get("/", async (req, res) => {
 
 router.post("/addUser", signUp);
 router.post("/signIn", signIn);
-
 router.put("/addToWatchLater", checkAuth, addToWatchLater);
 router.get("/watchList", checkAuth, watchLaterList);
 router.put("/removeMovie", removeWatchLaterList);
+router.post("/forgetPassword", forgetPassword);
+router.post("/resetPassword", resetPassword);
 
 module.exports = router;
