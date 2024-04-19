@@ -87,7 +87,7 @@ export default function BasicModal({
   const fetchGenres = async () => {
     try {
       const res = await axios.get(GENRE_API_URL);
-      setAllGenres(res.data);
+      setAllGenres(res.data.data);
       // //console.log("🚀 + fetchGenres + res.data:", res.data);
       setCheckedGenre(Array(res.data.length).fill(false));
     } catch (error) {

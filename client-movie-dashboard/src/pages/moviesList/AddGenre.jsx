@@ -21,6 +21,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 const Wrapper = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
+  marginTop: "5em",
   "& .add-genre-container": {
     background: theme.palette.secondary.light,
     padding: theme.spacing(5),
@@ -29,6 +30,7 @@ const Wrapper = styled(Box)(({ theme }) => ({
 
 const AddGenre = () => {
   const [allGenres, setAllGenres] = useState([]);
+  console.log("🚀 + AddGenre + allGenres:", allGenres);
   const [newGenre, setNewGenre] = useState("");
   console.log("🚀 + AddGenre + newGenre:", newGenre);
 
@@ -39,7 +41,8 @@ const AddGenre = () => {
   const fetchGenres = async () => {
     try {
       const res = await axios.get(GENRE_API_URL);
-      setAllGenres(res.data);
+      console.log("🚀 + fetchGenres + res:", res);
+      setAllGenres(res.data.data);
     } catch (error) {
       console.log("🚀 + fetchGenres + error:", error);
     }
@@ -47,9 +50,13 @@ const AddGenre = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(`${GENRE_API_URL}/deleteGenre/${id}`);
-      fetchGenres();
-      notify("Genre Deleted Successfully");
+      const response = await axios.delete(`${GENRE_API_URL}/deleteGenre/${id}`);
+      if (response.status === 200) {
+        notify(response.data.message);
+        fetchGenres();
+      } else {
+        notifyErr(response.data.message);
+      }
     } catch (error) {
       console.log("🚀 + fetchGenres + error:", error.response);
       notify(error.response.data.message);
@@ -57,21 +64,31 @@ const AddGenre = () => {
   };
   const handleAddGenre = async () => {
     try {
-      const res = await axios.post(`${GENRE_API_URL}/addGenres`, {
-        data: newGenre,
+      const response = await axios.post(`${GENRE_API_URL}/addGenres`, {
+        title: newGenre,
       });
-      fetchGenres();
-      notify("Genre Added Successfully");
-      setNewGenre("");
 
-      // // console.log("🚀 + handleAddMovie + res:", res);
+      if (response.status === 200) {
+        notify(response.data.message);
+        fetchGenres();
+        setNewGenre("");
+      } else {
+        notifyErr("Failed to add genre. Please try again later.");
+      }
     } catch (error) {
-      console.log("🚀 + fetchGenres + error:", error.response);
-      notify(error.response.data.message);
+      console.error("Error adding genre:", error);
+      if (error.response) {
+        notifyErr(error.response.data.message);
+      } else {
+        notifyErr(
+          "Failed to add genre. Please check your internet connection."
+        );
+      }
     }
   };
 
-  const notify = (mes) => toast(mes);
+  const notify = (mes) => toast.success(mes);
+  const notifyErr = (mes) => toast.error(mes);
   return (
     <Wrapper>
       <Container maxWidth="sm">

@@ -59,7 +59,7 @@ export default function MultipleSelectChip({
   const fetchGenres = async () => {
     try {
       const res = await axios.get(GENRE_API_URL);
-      setAllGenres(res.data);
+      setAllGenres(res.data.data);
     } catch (error) {
       console.log("🚀 + fetchGenres + error:", error);
     }
