@@ -10,6 +10,8 @@ import MoviesListing from "../pages/moviesList/MoviesListing";
 import MoviesWatchLater from "../pages/moviesList/MoviesWatchLater";
 import SignIn from "../pages/moviesList/SignIn";
 import SignUp from "../pages/moviesList/SignUp";
+import ForgotPassword from "../pages/moviesList/ForgotPassword";
+import ResetPassword from "../pages/moviesList/ResetPassword";
 // import ProtectedRoute from "../utils/ProtectedRoute";
 
 export const router = createBrowserRouter(
@@ -17,6 +19,8 @@ export const router = createBrowserRouter(
     <Route>
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/sign-up" element={<SignUp />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       {/* <Route element={<ProtectedRoute />}> */}
       <Route path="/" element={<RootLayout />}>
         <Route index element={<MoviesListing />} />

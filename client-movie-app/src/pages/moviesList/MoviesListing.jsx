@@ -65,14 +65,19 @@ const MoviesListing = () => {
       //navigate("/movies-watchlater");
       try {
         const userId = isLoggedIn.userId;
-        const response = axios.put(
+        const response = await axios.put(
           `${USER_API_URL}/addToWatchLater?userId=${userId}`,
           {
             data: { movieId: id },
           },
           { headers: { Authorization: isLoggedIn.token } }
         );
-        notifySuccess("Movie Added To Watchlater");
+        console.log("🚀 + addToWatchLater + response:", response);
+        if (response.status === 200) {
+          notifySuccess("Movie Added To Watchlater");
+        } else {
+          notifyErr(response.data.message);
+        }
         console.log("🚀 + watchLater + response:", response);
       } catch (error) {
         console.log("🚀 + watchLater + error:", error);
@@ -81,7 +86,7 @@ const MoviesListing = () => {
     }
   };
   const notifyErr = (mes) => toast.error(mes);
-  const notifySuccess = (mes) => toast.success(mes, { autoClose: 5000 });
+  const notifySuccess = (mes) => toast.success(mes, { autoClose: 3000 });
 
   const fetchFilteredMovies = async () => {
     try {

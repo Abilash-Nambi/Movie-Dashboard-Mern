@@ -12,12 +12,12 @@ const signUp = async (req, res) => {
     const { email, password, firstName, lastName } = req.body.data;
     console.log("🚀 + signUp + password:", password);
 
-    const isExist = await usersModel.findOne({ email });
+    const isExist = await userModel.findOne({ email });
     console.log("🚀 + signUp + isExist:", isExist);
 
     if (!isExist) {
       const hashPass = await generatePasswordHash(password);
-      const UserList = await usersModel.create({
+      const UserList = await userModel.create({
         firstName,
         lastName,
         email,
@@ -25,10 +25,9 @@ const signUp = async (req, res) => {
       });
 
       // Fetching the created user again with password excluded
-      const userWithoutPassword = await usersModel
+      const userWithoutPassword = await userModel
         .findById(UserList._id)
         .select("-password");
-
       res.status(200).json(userWithoutPassword);
       return;
     } else {
@@ -56,7 +55,7 @@ const removeWatchLaterList = async (req, res) => {
         .json({ message: "userId and movieId are required" });
     }
 
-    const result = await usersModel.updateOne(
+    const result = await userModel.updateOne(
       { _id: userId },
       { $pull: { movies: movieId } }
     );
@@ -88,7 +87,7 @@ const watchLaterList = async (req, res) => {
     const userId = req.query.userId;
 
     if (userId) {
-      const moviesList = await usersModel
+      const moviesList = await userModel
         .find({ _id: userId })
         .select("movies")
         .populate({ path: "movies", populate: { path: "genre" } });
@@ -107,22 +106,28 @@ const addToWatchLater = async (req, res) => {
   try {
     const userId = req.query.userId;
     const { movieId } = req.body.data;
-    if (userId && movieId) {
-      const newList = await usersModel.findByIdAndUpdate(
-        userId,
-        {
-          $push: { movies: movieId },
-        },
-        { new: true }
-      );
 
-      return res.status(200).json(newList);
-    } else {
-      return res.status(400).json({ message: "userId/movieId is required" });
+    if (!userId || !movieId) {
+      return res
+        .status(400)
+        .json({ message: "userId and movieId are required" });
     }
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId,
+      { $push: { movies: movieId } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json(updatedUser);
   } catch (error) {
-    res.status(400).json({
-      message: error.message,
+    console.error("Error adding movie to watch later:", error);
+    res.status(500).json({
+      message: "An error occurred while adding the movie to watch later",
     });
   }
 };
@@ -131,40 +136,37 @@ const signIn = async (req, res) => {
   try {
     const { email, password } = req.body.data;
 
-    const isExist = await userModel.findOne({ email });
-    // console.log("🚀 + signIn + isExist:", isExist);
+    const user = await userModel.findOne({ email });
 
-    if (isExist) {
-      const validPassword = await comparePassword(password, isExist.password);
-      if (!validPassword) {
-        return res.status(400).json({ message: "Incorrect password" });
-      }
-
-      //generate acess token..
-      const token = generateToken(isExist._id);
-      console.log("🚀 + signIn + token:", token);
-      return res.status(200).json({
-        message: "Login Success",
-        token: token,
-        email: isExist.email,
-        id: isExist._id,
-      });
-    } else {
-      res.status(400).json({
-        message: "Incorrect email/password",
-      });
-      return;
+    if (!user) {
+      return res.status(400).json({ message: "Incorrect email/password" });
     }
-  } catch (error) {
-    res.status(400).json({
-      message: error.message,
+
+    const validPassword = await comparePassword(password, user.password);
+
+    if (!validPassword) {
+      return res.status(400).json({ message: "Incorrect password" });
+    }
+
+    // Generate access token
+    const token = generateToken(user._id);
+
+    return res.status(200).json({
+      message: "Login Success",
+      token: token,
+      email: user.email,
+      id: user._id,
     });
+  } catch (error) {
+    console.error("Error signing in:", error);
+    res.status(500).json({ message: "An error occurred while signing in." });
   }
 };
+
 const forgetPassword = async (req, res) => {
   try {
-    const { email } = req.body;
-    console.log("🚀 + forgetPassword + email:", email);
+    const { email } = req.body.data;
+    //console.log("🚀 + forgetPassword + email:", email);
     const exist = await userModel.findOne({ email: email });
 
     if (!exist) {
@@ -178,20 +180,32 @@ const forgetPassword = async (req, res) => {
     PasscodeVerificationData.code = code;
     console.log("🚀 + PasscodeVerificationData:", PasscodeVerificationData);
     const result = await resetPasswordNodeMailer(email, code);
-    //console.log("🚀 + forgetPassword + result:", result);
-    res.json({ message: result });
+    console.log("🚀 + forgetPassword + result:", result);
+
+    // Check if email was sent successfully
+    if (result && result.accepted.length > 0) {
+      res
+        .status(200)
+        .json({ message: "Password reset email sent successfully" });
+    } else {
+      res.status(500).json({ message: "Failed to send password reset email" });
+    }
   } catch (error) {
-    res.json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
 const resetPassword = async (req, res) => {
   try {
-    const { passwordReset } = req.body;
-    // console.log("🚀 + resetPassword + passwordReset:", passwordReset);
-    //console.log(PasscodeVerificationData, "465");
-    if (passwordReset.resetCode === PasscodeVerificationData.code) {
-      const hashPass = await generatePasswordHash(passwordReset.newPassword);
+    const { data } = req.body;
+    console.log("🚀 + resetPassword + data:", data);
+    console.log(
+      "🚀 + resetPassword + PasscodeVerificationData:",
+      PasscodeVerificationData
+    );
+    const parsedCode = parseInt(data.resetCode);
+    if (parsedCode === PasscodeVerificationData.code) {
+      const hashPass = await generatePasswordHash(data.newPassword);
       const update = await userModel.findByIdAndUpdate(
         PasscodeVerificationData.userId,
         {
@@ -199,13 +213,16 @@ const resetPassword = async (req, res) => {
         },
         { new: true }
       );
-      PasscodeVerificationData = {};
-      res.json(update);
+      PasscodeVerificationData = {}; // Clear verification data
+      res.status(200).json({ message: "Password reset successfully." });
     } else {
-      res.status(401).json({ message: "You entered the wrong reset code!.😣" });
+      res.status(401).json({ message: "You entered the wrong reset code." });
     }
   } catch (error) {
-    console.log("🚀 + resetPassword + error:", error);
+    console.error("Error resetting password:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while resetting the password." });
   }
 };
 

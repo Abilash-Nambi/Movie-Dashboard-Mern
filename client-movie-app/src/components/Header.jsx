@@ -37,6 +37,7 @@ const Wrapper = styled(Box)(({ theme }) => ({
 const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [show, setShow] = React.useState(null);
+  const [userData, setUserData] = React.useState({});
   const navigate = useNavigate();
 
   const handleMenu = (event) => {
@@ -51,8 +52,9 @@ const Header = () => {
   }, []);
 
   const isLoggedIn = () => {
-    let isLoggedIn = JSON.parse(localStorage.getItem("movieDb"));
-    if (!isLoggedIn || !isLoggedIn.token) {
+    let user = JSON.parse(localStorage.getItem("movieDb"));
+    setUserData(user);
+    if (!user || !user.token) {
       setShow(false);
     } else {
       setShow(true);
@@ -128,7 +130,7 @@ const Header = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleClose}>{userData?.email}</MenuItem>
                 <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
               </Menu>
             </Box>

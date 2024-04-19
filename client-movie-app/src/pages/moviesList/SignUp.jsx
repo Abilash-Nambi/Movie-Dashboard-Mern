@@ -14,6 +14,8 @@ import Container from "@mui/material/Container";
 import axios from "axios";
 import { USER_API_URL } from "../../constants/const";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 function Copyright(props) {
   return (
@@ -34,18 +36,22 @@ function Copyright(props) {
 }
 
 export default function SignUp() {
+  const [error, setError] = useState(false);
+
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-
-    // const formData = {
-    //   email: data.get("email"),
-    //   password: data.get("password"),
-    //   firstName: data.get("firstName"),
-    //   lastName: data.get("lastName"),
-    // };
-
+    if (
+      !data.get("email") ||
+      !data.get("password") ||
+      !data.get("firstName") ||
+      !data.get("lastName")
+    ) {
+      setError(true);
+    } else {
+      setError(false);
+    }
     try {
       const response = await axios.post(`${USER_API_URL}/addUser`, {
         data: {
@@ -55,12 +61,23 @@ export default function SignUp() {
           lastName: data.get("lastName"),
         },
       });
-      navigate("/sign-in");
+      if (response.status === 200) {
+        notifySuccess("User Created Successfully");
+        setTimeout(() => {
+          navigate("/sign-in");
+        }, 3000);
+      } else {
+        notifyErr(response.data.message);
+      }
+
       console.log("🚀 + handleSubmit + response:", response);
     } catch (error) {
+      notifyErr(error.response.data.message);
       console.log("🚀 + handleSubmit + error:", error);
     }
   };
+  const notifyErr = (mes) => toast.error(mes);
+  const notifySuccess = (mes) => toast.success(mes);
 
   return (
     <>
@@ -80,6 +97,11 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
+          {error && (
+            <Typography component="h6" variant="h6">
+              Please fill all fields*
+            </Typography>
+          )}
           <Box
             component="form"
             noValidate
@@ -96,6 +118,7 @@ export default function SignUp() {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  error={error}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -106,6 +129,7 @@ export default function SignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  error={error}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -116,6 +140,7 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={error}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -127,14 +152,7 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox value="allowExtraEmails" color="primary" />
-                  }
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                  error={error}
                 />
               </Grid>
             </Grid>
@@ -155,6 +173,7 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
+        <ToastContainer />
         <Copyright sx={{ mt: 5 }} />
       </Container>
     </>

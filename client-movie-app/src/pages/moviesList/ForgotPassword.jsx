@@ -15,76 +15,66 @@ import axios from "axios";
 import { USER_API_URL } from "../../constants/const";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+
+import { CustomInput } from "../../components/CustomInput";
 import Loader from "../../components/Loader";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-export default function SignIn() {
+const ForgotPassword = () => {
+  const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [load, setLoad] = React.useState(false);
   const navigate = useNavigate();
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
 
-    try {
-      setLoad(true);
-      const response = await axios.post(`${USER_API_URL}/signIn`, {
-        data: {
-          email: data.get("email"),
-          password: data.get("password"),
-        },
-      });
-      console.log("🚀 + handleSubmit + response:", response);
+  const handleChange = (e) => {
+    setEmail(e.target.value);
+  };
 
-      if (response.status == 200) {
-        localStorage.setItem(
-          "movieDb",
-          JSON.stringify({
-            token: response?.data?.token,
-            email: response?.data?.email,
-            userId: response?.data?.id,
-          })
-        );
-        notifySuccess(response.data.message);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      setEmailError("Email is required");
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Invalid email address");
+    } else {
+      try {
+        setLoad(true);
+        const response = await axios.post(`${USER_API_URL}/forgetPassword`, {
+          data: {
+            email,
+          },
+        });
+
+        if (response.status === 200) {
+          setLoad(false);
+          notifySuccess(response.data.message);
+          setTimeout(() => {
+            navigate("/reset-password");
+          }, 3000);
+        }
+      } catch (error) {
+        console.log("🚀 + handleSubmit + error:", error.response.data.message);
+        notifyErr(error.response.data.message);
         setLoad(false);
-        navigate("/");
-      } else {
-        notifyErr(response.data.message);
       }
 
-      console.log("🚀 + handleSubmit + response:", response);
-    } catch (error) {
-      console.log("🚀 + handleSubmit + error:", error);
-      notifyErr(error.response.data.message);
-      setLoad(false);
+      setEmail("");
+      setEmailError("");
     }
   };
 
+  const handleBlur = () => {
+    if (!email) {
+      setEmailError("Email is required");
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Invalid email address");
+    } else {
+      setEmailError("");
+    }
+  };
   const notifyErr = (mes) => toast.error(mes);
   const notifySuccess = (mes) => toast.success(mes);
-
   return (
-    <>
+    <div>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -102,9 +92,8 @@ export default function SignIn() {
               <LockOutlinedIcon />
             </Avatar>
           )}
-
           <Typography component="h1" variant="h5">
-            Sign in
+            Enter your Registered mail id
           </Typography>
           <Box
             component="form"
@@ -121,46 +110,36 @@ export default function SignIn() {
               name="email"
               autoComplete="email"
               autoFocus
+              type="email"
+              value={email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={!!emailError}
+              helperText={emailError}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Submit
             </Button>
             <Grid container>
-              <Grid item xs>
-                <Link to="/forgot-password" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
               <Grid item>
-                <Link to="/sign-up" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link to="/sign-in" variant="body2">
+                  {"Go back to sign-in"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
+
         <ToastContainer />
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
-    </>
+    </div>
   );
-}
+};
+
+export default ForgotPassword;
