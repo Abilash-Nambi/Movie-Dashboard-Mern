@@ -7,6 +7,14 @@
 
 ![Screenshot 2024-04-20 121839](https://github.com/Abilash-Nambi/Movie-Dashboard-Mern/assets/142148604/9a4065b2-3ce5-4ba8-bbb2-ff7bf3362982)
 
+
+<h6 align="center" id="title">Dashboard Demo Video</h6>
+
+
+https://github.com/Abilash-Nambi/Movie-Dashboard-Mern/assets/142148604/6a05b739-f2a9-4a3a-9191-912614ae3b37
+
+
+
 <p id="description">This is a full-stack movie app built with the MERN stack and developed using the MVC architecture. It features a movie dashboard where users can add new movies to the app and manage their movie collection as well as a user page that allows users to manage their watch later list. The app also includes functionality to reset user passwords via email.</p>
 
   
