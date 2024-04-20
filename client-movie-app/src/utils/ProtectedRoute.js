@@ -1,14 +1,14 @@
-// import React, { useState } from "react";
-// import { Navigate, Outlet } from "react-router";
+// import { useNavigate, Outlet } from "react-router-dom";
 
-// const ProtectedRoutes = () => {
-//   const token = localStorage.getItem("movieDb");
+// const ProtectedRoute = ({ children }) => {
+//   const user = JSON.parse(localStorage.getItem("movieDb"));
 
-//   if (!token) {
-//     return <Navigate to="sign-in" />;
+//   if (!user || !user.token) {
+//     window.location.href = "/sign-in";
+//     return null;
 //   }
 
-//   return <Outlet />;
+//   return children;
 // };
 
-// export default ProtectedRoutes;
+// export default ProtectedRoute;
