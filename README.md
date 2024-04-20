@@ -10,6 +10,12 @@
 
 #Dashboard Demo Video: (URL: https://github.com/Abilash-Nambi/Movie-Dashboard-Mern/assets/142148604/6a05b739-f2a9-4a3a-9191-912614ae3b37)
 
+#Pagination, filter, forgot password, Signin, Signup Demo video: (URL: https://github.com/Abilash-Nambi/Movie-Dashboard-Mern/assets/142148604/d2532193-0c0a-432d-9232-f1237a79f681) 
+
+
+
+
+
 
 
 
