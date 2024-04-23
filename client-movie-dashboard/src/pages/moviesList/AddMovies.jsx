@@ -7,6 +7,7 @@ import {
   Divider,
   FormControlLabel,
   FormGroup,
+  Grid,
   Stack,
   Typography,
 } from "@mui/material";
@@ -128,69 +129,81 @@ const AddMovies = () => {
 
   return (
     <Wrapper>
-      <Container maxWidth="md">
-        <Stack spacing={1} className="add-movies-container">
-          <Typography variant="caption">
-            <label htmlFor="movie-image">Image</label>
-          </Typography>
-          <img src={imageUrl} className="add-movies-image" alt="Movie Image" />
-          <Button variant="contained" component="label" color="secondary">
-            Upload File
-            <input type="file" hidden onChange={(e) => handleChangeImage(e)} />
-          </Button>
+      <Container maxWidth="xl">
+        <Grid container>
+          <Grid xs={12} sm={12} lg={10} xl={10}>
+            <Stack spacing={1} className="add-movies-container">
+              <Typography variant="caption">
+                <label htmlFor="movie-image">Image</label>
+              </Typography>
+              <img
+                src={imageUrl}
+                className="add-movies-image"
+                alt="Movie Image"
+              />
+              <Button variant="contained" component="label" color="secondary">
+                Upload File
+                <input
+                  type="file"
+                  hidden
+                  onChange={(e) => handleChangeImage(e)}
+                />
+              </Button>
 
-          <Typography variant="caption">Title</Typography>
-          <CustomInput
-            label="Title"
-            variant="outlined"
-            onChange={(e) => setMovieTitle(e.target.value)}
-          />
-          <Typography variant="caption">Rating</Typography>
-          <Slider
-            disabled={false}
-            marks
-            max={5}
-            min={0}
-            size="small"
-            valueLabelDisplay="on"
-            color="secondary"
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-          />
-          <Typography variant="caption">Genre</Typography>
-          <Box>
-            <FormGroup className="add-movies-genre">
-              {allGenres.map((data, i) => {
-                return (
-                  <FormControlLabel
-                    key={i}
-                    control={
-                      <Checkbox
-                        id={data._id}
-                        size="small"
-                        color="secondary"
-                        onChange={() => handleCheckbox(i, data._id)}
-                        checked={checkedGenre[i]}
+              <Typography variant="caption">Title</Typography>
+              <CustomInput
+                label="Title"
+                variant="outlined"
+                onChange={(e) => setMovieTitle(e.target.value)}
+              />
+              <Typography variant="caption">Rating</Typography>
+              <Slider
+                disabled={false}
+                marks
+                max={5}
+                min={0}
+                size="small"
+                valueLabelDisplay="on"
+                color="secondary"
+                value={rating}
+                onChange={(e) => setRating(e.target.value)}
+              />
+              <Typography variant="caption">Genre</Typography>
+              <Box>
+                <FormGroup className="add-movies-genre">
+                  {allGenres.map((data, i) => {
+                    return (
+                      <FormControlLabel
+                        key={i}
+                        control={
+                          <Checkbox
+                            id={data._id}
+                            size="small"
+                            color="secondary"
+                            onChange={() => handleCheckbox(i, data._id)}
+                            checked={checkedGenre[i]}
+                          />
+                        }
+                        label={data.title}
                       />
-                    }
-                    label={data.title}
-                  />
-                );
-              })}
-            </FormGroup>
-          </Box>
-          <Box>
-            <CustomButton
-              variant="contained"
-              fullWidth
-              color="secondary"
-              text="Submit"
-              size="medium"
-              onClick={handleAddMovie}
-            />
-          </Box>
-        </Stack>
-        <ToastContainer />
+                    );
+                  })}
+                </FormGroup>
+              </Box>
+              <Box>
+                <CustomButton
+                  variant="contained"
+                  fullWidth
+                  color="secondary"
+                  text="Submit"
+                  size="medium"
+                  onClick={handleAddMovie}
+                />
+              </Box>
+            </Stack>
+            <ToastContainer />
+          </Grid>
+        </Grid>
       </Container>
     </Wrapper>
   );
