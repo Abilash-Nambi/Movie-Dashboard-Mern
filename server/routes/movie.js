@@ -106,10 +106,12 @@ router.post("/filter", async (req, res) => {
     let genre = req.body.data;
     const skipCount = page * limit;
     let filter = {};
+
     if (genre?.length > 0) {
       const genreData = await genreModel.find({ title: { $in: genre } });
       const genreObjId = genreData.map((data) => data._id);
       filter.genre = { $all: genreObjId };
+      console.log("🚀 + router.post + filter:", filter);
       const filteredMovies = await movieModel
         .find(filter)
         .populate("genre")
