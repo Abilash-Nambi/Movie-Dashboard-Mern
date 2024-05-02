@@ -9,7 +9,9 @@ const checkAuth = (req, res, next) => {
     const tokenValid = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.userId = tokenValid._id;
     next();
-  } catch (error) {}
+  } catch (error) {
+    res.status(401).json({ message: "You are Unauthorized" });
+  }
 };
 
 module.exports = { checkAuth };
