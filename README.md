@@ -21,7 +21,7 @@
 
 
 
-<p id="description">This is a full-stack movie app built with the MERN stack and developed using the MVC architecture. It features a movie dashboard where users can add new movies to the app and manage their movie collection as well as a user page that allows users to manage their watch later list. The app also includes functionality to reset user passwords via email.</p>
+<p id="description">This is a full-stack movie app built with the MERN stack and developed using the MVC architecture. It features a movie dashboard where admin can add new movies to the app and manage their movie collection as well as a user page that allows users to manage their watch later list. The app also includes functionality to reset user passwords via email.</p>
 
   
   
