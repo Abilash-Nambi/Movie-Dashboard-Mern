@@ -1,4 +1,4 @@
-<h1 align="center" id="title">The Movie Dashboard and User App (MERN)</h1>
+<h1 align="center" id="title">The PLay Movies Dashboard and User App (MERN)</h1>
 
 ![Screenshot 2024-04-20 121647](https://github.com/Abilash-Nambi/Movie-Dashboard-Mern/assets/142148604/a6f36e6c-6c48-4c4f-9e17-c3958c5947b4)
 
